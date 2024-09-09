@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuários Armazenados</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<h1>Usuários Armazenados</h1>
+<div id="allUsersContainer"></div>
+<button onclick="window.location.href='index.html'">Voltar</button>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const allUsersContainer = document.getElementById('allUsersContainer');
+        allUsersContainer.innerHTML = '';
+
+        users.forEach(user => {
+            const userCard = `
+                <div class="user-card">
+                    <img src="${user.picture}" alt="Foto do Usuário" width="100">
+                    <h2>${user.name}</h2>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Data de Nascimento:</strong> ${user.dob}</p>
+                    <p><strong>Idade:</strong> ${user.age}</p>
+                </div>
+            `;
+            allUsersContainer.innerHTML += userCard;
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Usuários Aleatórios</title>
+    <link rel="stylesheet" href="assets/css/style.css"> 
+</head>
+<body>
+
+<h1>Gerador de Usuários Aleatórios</h1>
+<div class="button-container">
+    <button id="generateUser">Gerar Usuário</button>
+    <button id="showUsers">Mostrar Usuários</button>
+    <button id="hideUsers">Esconder Usuários</button>
+</div>
+<div id="userContainer"></div>
+<div id="allUsersContainer"></div>
+
+<script>
+    document.getElementById('generateUser').addEventListener('click', function() {
+        fetch('https://randomuser.me/api/')
+            .then(response => response.json())
+            .then(data => {
+                const user = data.results[0];
+                const userData = {
+                    name: `${user.name.first} ${user.name.last}`,
+                    email: user.email,
+                    dob: new Date(user.dob.date).toLocaleDateString(),
+                    age: user.dob.age,
+                    picture: user.picture.large 
+                };
+
+                
+                saveUserToLocalStorage(userData);
+
+                
+                displayUser(userData);
+            })
+            .catch(error => console.error('Erro ao buscar usuário:', error));
+    });
+
+    function saveUserToLocalStorage(user) {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        users.push(user);
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function displayUser(userData) {
+        const userCard = `
+            <div class="user-card">
+                <img src="${userData.picture}" alt="Foto do Usuário" width="100">
+                <h2>${userData.name}</h2>
+                <p><strong>Email:</strong> ${userData.email}</p>
+                <p><strong>Data de Nascimento:</strong> ${userData.dob}</p>
+                <p><strong>Idade:</strong> ${userData.age}</p>
+            </div>
+        `;
+        document.getElementById('userContainer').innerHTML = userCard;
+    }
+
+    document.getElementById('showUsers').addEventListener('click', function() {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const allUsersContainer = document.getElementById('allUsersContainer');
+        allUsersContainer.innerHTML = '';
+
+        users.forEach(user => {
+            const userCard = `
+                <div class="user-card">
+                    <img src="${user.picture}" alt="Foto do Usuário" width="100">
+                    <h2>${user.name}</h2>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Data de Nascimento:</strong> ${user.dob}</p>
+                    <p><strong>Idade:</strong> ${user.age}</p>
+                </div>
+            `;
+            allUsersContainer.innerHTML += userCard;
+        });
+    });
+
+    document.getElementById('hideUsers').addEventListener('click', function() {
+        document.getElementById('allUsersContainer').innerHTML = '';
+    });
+</script>
+
+</body>
+</html>
